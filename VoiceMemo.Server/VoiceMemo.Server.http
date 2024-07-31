@@ -1,0 +1,6 @@
+@VoiceMemo.Server_HostAddress = http://localhost:5069
+
+GET {{VoiceMemo.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
