@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 interface Memo {
-  name?: string;
-  text?: string;
+  title: string;
+  content: string;
 }
 
 interface MemoProps {
@@ -11,10 +11,12 @@ interface MemoProps {
 }
 
 function MemoList({ onPost, memos }: MemoProps) {
-  const [memo, setMemo] = useState<Memo>({ name: "", text: "" });
+  const [memo, setMemo] = useState<Memo>({ title: "", content: "" });
 
-  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const { name, value } = e.currentTarget;
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
     setMemo((prev) => ({
       ...prev,
       [name]: value,
@@ -24,45 +26,46 @@ function MemoList({ onPost, memos }: MemoProps) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onPost(memo);
-    setMemo({ name: "", text: "" });
+    setMemo({ title: "", content: "" });
   };
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <input
-            name="name"
-            type="text"
-            value={memo.name}
-            placeholder="Memo name"
-            onChange={handleChange}
-          ></input>
+      {memos.map((m, i) => (
+        <div key={i} className="memo-item">
+          <div>{m.title}</div>
+          <div>{m.content}</div>
         </div>
-        <div>
-          <input
-            name="text"
-            type="text"
-            value={memo.text}
-            placeholder="Enter text here..."
-            onChange={handleChange}
-          ></input>
-        </div>
-        <button type="submit">Submit</button>
-      </form>
-      <ul>
-        {memos.map((m, i) => (
-          <li key={i}>
-            <div>{m.name}</div>
-            <div>{m.text}</div>
-          </li>
-        ))}
-      </ul>
+      ))}
+      <div className="memo-item">
+        <form onSubmit={handleSubmit}>
+          <div>
+            <input
+              name="title"
+              type="text"
+              value={memo.title}
+              placeholder="Memo name"
+              onChange={handleChange}
+            ></input>
+          </div>
+          <div>
+            <textarea
+              name="content"
+              value={memo.content}
+              placeholder="Enter text here..."
+              onChange={handleChange}
+            ></textarea>
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     </>
   );
 }
 export default function Memos() {
   const [memos, setMemos] = useState<Array<Memo>>([]);
+
+  //get memos
 
   //post memo
   const postMemo = (memo: Memo) => {
@@ -70,8 +73,8 @@ export default function Memos() {
     setMemos([...memos, memo]);
   };
 
-  //get memos
   //put memo
+
   //delete memo
 
   return <MemoList onPost={postMemo} memos={memos}></MemoList>;
