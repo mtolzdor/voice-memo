@@ -1,5 +1,4 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 interface Memo {
   title: string;
   content: string;
@@ -65,12 +64,42 @@ function MemoList({ onPost, memos }: MemoProps) {
 export default function Memos() {
   const [memos, setMemos] = useState<Array<Memo>>([]);
 
-  //get memos
+    //get memos
+    useEffect(() => {
+        getMemo();
+    }, []);
 
+    const getMemo = async () => {
+        try {
+            const response = await fetch('api/MemoItems');
+            const data = await response.json();
+            if (response.ok) {
+                setMemos(data);
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    };
   //post memo
-  const postMemo = (memo: Memo) => {
-    //post request
-    setMemos([...memos, memo]);
+  const postMemo = async (memo: Memo) => {
+      try {
+          const response = await fetch('api/MemoItems', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(memo)
+          });
+          if (!response.ok) {
+              throw new Error(response.statusText)
+          }
+          const data = await response.json();
+          setMemos([...memos, data]);
+      }
+      catch (e) {
+          console.log(e)
+      }
   };
 
   //put memo
